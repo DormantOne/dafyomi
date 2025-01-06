@@ -105,7 +105,7 @@
 
         <div class="ai-links">
             <h4>Ask AI to Help:</h4>
-            <p>Please explain the context in English, summarize, and translate key phrases:</p>
+            <p>Please provide context, summarize, and translate key phrases for this Daf:</p>
             <a id="perplexityLink" href="#" target="_blank">Perplexity</a>
             <a id="geminiLink" href="#" target="_blank">Gemini</a>
             <a id="bingLink" href="#" target="_blank">Microsoft Copilot</a>
@@ -164,7 +164,8 @@
                 hebrewTextDiv.innerHTML = Array.isArray(hebrewText) ? hebrewText.join("<br>") : hebrewText;
 
                 // Update AI discussion links
-                const encodedText = encodeURIComponent(hebrewTextContent);
+                const aiPrompt = "Provide context, summarize, and translate key phrases for the following Daf: ";
+                const encodedText = encodeURIComponent(`${aiPrompt}\n\n${hebrewTextContent}`);
                 document.getElementById("perplexityLink").href = `https://www.perplexity.ai/?q=${encodedText}`;
                 document.getElementById("geminiLink").href = `https://gemini.google.com/search?q=${encodedText}`;
                 document.getElementById("bingLink").href = `https://copilot.microsoft.com/?q=${encodedText}`;
