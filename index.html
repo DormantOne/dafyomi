@@ -5,44 +5,126 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Daf Yomi with AI Tools</title>
     <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            background-color: #1a73e8;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 2em;
+        }
+
+        header h2 {
+            margin: 0;
+            font-size: 1.2em;
+            font-weight: normal;
+        }
+
+        main {
+            padding: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
         #hebrewText {
             direction: rtl;
-            font-family: 'Arial', sans-serif;
-            background-color: #f9f9f9;
-            padding: 10px;
-            border: 1px solid #ccc;
+            font-family: 'David', serif;
+            background-color: #ffffff;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
             margin-top: 20px;
             max-height: 300px;
             overflow-y: auto;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         }
-        .ai-links {
+
+        .buttons {
             margin-top: 20px;
+            text-align: center;
         }
+
+        .buttons button {
+            background-color: #1a73e8;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            margin: 5px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+        }
+
+        .buttons button:hover {
+            background-color: #1558b3;
+        }
+
+        .ai-links {
+            text-align: center;
+            margin-top: 30px;
+        }
+
         .ai-links a {
-            margin-right: 10px;
             text-decoration: none;
-            color: #0078d4;
+            color: #1a73e8;
             font-weight: bold;
+            margin: 0 10px;
+            font-size: 1.1em;
+        }
+
+        .ai-links a:hover {
+            text-decoration: underline;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 30px;
+            color: #888;
         }
     </style>
 </head>
 <body>
-    <h1>Daf Yomi for Today</h1>
-    <h2 id="currentDate"></h2>
-    <h3 id="currentDaf"></h3>
-    <button id="fetchDaf">Fetch Daf</button>
-    <button id="copyDaf">Copy Daf Content</button>
-    <div id="hebrewText"></div>
+    <header>
+        <h1>Daf Yomi</h1>
+        <h2>Explore, Summarize, and Translate Key Insights</h2>
+    </header>
 
-    <div class="ai-links">
-        <h4>Discuss Daf Yomi with AI:</h4>
-        <a id="perplexityLink" href="#" target="_blank">Perplexity</a>
-        <a id="geminiLink" href="#" target="_blank">Gemini</a>
-        <a id="bingLink" href="#" target="_blank">Microsoft Bing</a>
-    </div>
+    <main>
+        <h3 id="currentDate"></h3>
+        <h3 id="currentDaf"></h3>
+        
+        <div class="buttons">
+            <button id="fetchDaf">Fetch Daf</button>
+            <button id="copyDaf">Copy Daf Content</button>
+        </div>
+
+        <div id="hebrewText"></div>
+
+        <div class="ai-links">
+            <h4>Ask AI to Help:</h4>
+            <p>Please explain the context in English, summarize, and translate key phrases:</p>
+            <a id="perplexityLink" href="#" target="_blank">Perplexity</a>
+            <a id="geminiLink" href="#" target="_blank">Gemini</a>
+            <a id="bingLink" href="#" target="_blank">Microsoft Copilot</a>
+        </div>
+    </main>
+
+    <footer>
+        &copy; 2025 Daf Yomi Project - Empowering Learning Through Technology
+    </footer>
 
     <script>
-        const dafYomiJsonUrl = "Daf_Yomi_Cycle.json"; // Path to the JSON file
+        const dafYomiJsonUrl = "https://yourusername.github.io/daf-yomi/Daf_Yomi_Cycle.json"; // Adjust with your GitHub Pages JSON URL
         let hebrewTextContent = "";
 
         // Get today's date in YYYY-MM-DD format
@@ -91,7 +173,7 @@
                 const encodedText = encodeURIComponent(hebrewTextContent);
                 document.getElementById("perplexityLink").href = `https://www.perplexity.ai/?q=${encodedText}`;
                 document.getElementById("geminiLink").href = `https://gemini.google.com/search?q=${encodedText}`;
-                document.getElementById("bingLink").href = `https://www.bing.com/search?q=${encodedText}`;
+                document.getElementById("bingLink").href = `https://copilot.microsoft.com/?q=${encodedText}`;
 
             } catch (error) {
                 hebrewTextDiv.textContent = error.message;
