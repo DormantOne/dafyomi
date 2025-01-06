@@ -79,6 +79,13 @@
             text-decoration: underline;
         }
 
+        #promptRecap {
+            margin-top: 20px;
+            font-size: 1em;
+            color: #555;
+            text-align: left;
+        }
+
         footer {
             text-align: center;
             margin-top: 30px;
@@ -98,10 +105,15 @@
         
         <div class="buttons">
             <button id="fetchDaf">Fetch Daf</button>
-            <button id="copyDaf">Copy Daf Content</button>
         </div>
 
         <div id="hebrewText">Your Daf Yomi content will appear here.</div>
+
+        <div id="promptRecap"></div>
+
+        <div class="buttons">
+            <button id="copyDaf">Copy Prompt and Daf</button>
+        </div>
 
         <div class="ai-links">
             <h4>Ask AI to Help:</h4>
@@ -119,6 +131,7 @@
     <script>
         const dafYomiJsonUrl = "Daf_Yomi_Cycle.json"; // Path to the JSON file
         let hebrewTextContent = "";
+        const aiPrompt = "Provide context, summarize, and translate key phrases for the following Daf: ";
 
         // Get today's date in YYYY-MM-DD format
         const today = new Date().toISOString().split('T')[0];
@@ -127,6 +140,7 @@
             const currentDateDiv = document.getElementById("currentDate");
             const currentDafDiv = document.getElementById("currentDaf");
             const hebrewTextDiv = document.getElementById("hebrewText");
+            const promptRecapDiv = document.getElementById("promptRecap");
 
             // Fetch the Daf Yomi JSON file
             try {
@@ -163,8 +177,11 @@
 
                 hebrewTextDiv.innerHTML = Array.isArray(hebrewText) ? hebrewText.join("<br>") : hebrewText;
 
+                // Display prompt recap with the beginning of the Daf
+                const shortenedText = hebrewTextContent.split("\n").slice(0, 3).join(" ") + "...";
+                promptRecapDiv.textContent = `${aiPrompt} ${shortenedText}`;
+
                 // Update AI discussion links
-                const aiPrompt = "Provide context, summarize, and translate key phrases for the following Daf: ";
                 const encodedText = encodeURIComponent(`${aiPrompt}\n\n${hebrewTextContent}`);
                 document.getElementById("perplexityLink").href = `https://www.perplexity.ai/?q=${encodedText}`;
                 document.getElementById("geminiLink").href = `https://gemini.google.com/search?q=${encodedText}`;
@@ -176,9 +193,12 @@
         });
 
         document.getElementById("copyDaf").addEventListener("click", () => {
+            const promptRecapDiv = document.getElementById("promptRecap");
+            const fullTextToCopy = `${promptRecapDiv.textContent}\n\n${hebrewTextContent}`;
+
             if (hebrewTextContent) {
-                navigator.clipboard.writeText(hebrewTextContent)
-                    .then(() => alert("Daf Yomi content copied to clipboard!"))
+                navigator.clipboard.writeText(fullTextToCopy)
+                    .then(() => alert("Prompt and Daf Yomi content copied to clipboard!"))
                     .catch(() => alert("Failed to copy content."));
             } else {
                 alert("No content to copy!");
