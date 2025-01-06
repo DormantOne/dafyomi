@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daf Yomi with AI Tools</title>
+    <style>
+        #hebrewText {
+            direction: rtl;
+            font-family: 'Arial', sans-serif;
+            background-color: #f9f9f9;
+            padding: 10px;
+            border: 1px solid #ccc;
+            margin-top: 20px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .ai-links {
+            margin-top: 20px;
+        }
+        .ai-links a {
+            margin-right: 10px;
+            text-decoration: none;
+            color: #0078d4;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <h1>Daf Yomi for Today</h1>
+    <h2 id="currentDate"></h2>
+    <h3 id="currentDaf"></h3>
+    <button id="fetchDaf">Fetch Daf</button>
+    <button id="copyDaf">Copy Daf Content</button>
+    <div id="hebrewText"></div>
+
+    <div class="ai-links">
+        <h4>Discuss Daf Yomi with AI:</h4>
+        <a id="perplexityLink" href="#" target="_blank">Perplexity</a>
+        <a id="geminiLink" href="#" target="_blank">Gemini</a>
+        <a id="bingLink" href="#" target="_blank">Microsoft Bing</a>
+    </div>
+
+    <script>
+        const dafYomiJsonUrl = "Daf_Yomi_Cycle.json"; // Path to the JSON file
+        let hebrewTextContent = "";
+
+        // Get today's date in YYYY-MM-DD format
+        const today = new Date().toISOString().split('T')[0];
+
+        document.getElementById("fetchDaf").addEventListener("click", async () => {
+            const currentDateDiv = document.getElementById("currentDate");
+            const currentDafDiv = document.getElementById("currentDaf");
+            const hebrewTextDiv = document.getElementById("hebrewText");
+
+            // Fetch the Daf Yomi JSON file
+            try {
+                const response = await fetch(dafYomiJsonUrl);
+                if (!response.ok) {
+                    throw new Error("Failed to load Daf Yomi JSON.");
+                }
+                const dafYomiData = await response.json();
+                const currentDaf = dafYomiData[today];
+
+                if (!currentDaf) {
+                    currentDateDiv.textContent = `Today's Date: ${today}`;
+                    currentDafDiv.textContent = "No Daf Yomi assigned for today.";
+                    return;
+                }
+
+                currentDateDiv.textContent = `Today's Date: ${today}`;
+                currentDafDiv.textContent = `Daf Yomi: ${currentDaf}`;
+
+                // Fetch the text for the current Daf
+                const url = `https://www.sefaria.org/api/v3/texts/${currentDaf}`;
+                const dafResponse = await fetch(url, {
+                    headers: { "accept": "application/json" }
+                });
+
+                if (!dafResponse.ok) {
+                    throw new Error("Failed to load Daf text.");
+                }
+
+                const dafData = await dafResponse.json();
+                const hebrewText = dafData.versions.find(v => v.language === "he")?.text || "No Hebrew text found.";
+                hebrewTextContent = Array.isArray(hebrewText) ? hebrewText.join("\n") : hebrewText;
+
+                hebrewTextDiv.innerHTML = Array.isArray(hebrewText) ? hebrewText.join("<br>") : hebrewText;
+
+                // Update AI discussion links
+                const encodedText = encodeURIComponent(hebrewTextContent);
+                document.getElementById("perplexityLink").href = `https://www.perplexity.ai/?q=${encodedText}`;
+                document.getElementById("geminiLink").href = `https://gemini.google.com/search?q=${encodedText}`;
+                document.getElementById("bingLink").href = `https://www.bing.com/search?q=${encodedText}`;
+
+            } catch (error) {
+                hebrewTextDiv.textContent = error.message;
+            }
+        });
+
+        document.getElementById("copyDaf").addEventListener("click", () => {
+            if (hebrewTextContent) {
+                navigator.clipboard.writeText(hebrewTextContent)
+                    .then(() => alert("Daf Yomi content copied to clipboard!"))
+                    .catch(() => alert("Failed to copy content."));
+            } else {
+                alert("No content to copy!");
+            }
+        });
+    </script>
+</body>
+</html>
