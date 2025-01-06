@@ -63,8 +63,7 @@
         }
 
         .ai-links {
-            text-align: center;
-            margin-top: 20px;
+            margin-top: 30px;
         }
 
         .ai-links a {
@@ -75,8 +74,10 @@
             margin: 0 10px;
         }
 
-        .ai-links a:hover {
-            text-decoration: underline;
+        footer {
+            text-align: center;
+            margin-top: 30px;
+            color: #888;
         }
 
         #promptRecap {
@@ -84,12 +85,6 @@
             font-size: 1em;
             color: #555;
             text-align: left;
-        }
-
-        footer {
-            text-align: center;
-            margin-top: 30px;
-            color: #888;
         }
     </style>
 </head>
@@ -116,11 +111,12 @@
         </div>
 
         <div class="ai-links">
-            <h4>Ask AI to Help:</h4>
-            <p>Please provide context, summarize, and translate key phrases for this Daf:</p>
-            <a id="perplexityLink" href="#" target="_blank">Perplexity</a>
-            <a id="geminiLink" href="#" target="_blank">Gemini</a>
-            <a id="bingLink" href="#" target="_blank">Microsoft Copilot</a>
+            <h4>AI Discussion Links:</h4>
+            <ul>
+                <li><a href="https://www.perplexity.ai/" target="_blank">Go to Perplexity</a> (Paste your content there)</li>
+                <li><a href="https://gemini.google.com/" target="_blank">Go to Gemini</a> (Paste your content there)</li>
+                <li><a href="https://copilot.microsoft.com/" target="_blank">Go to Microsoft Copilot</a> (Paste your content there)</li>
+            </ul>
         </div>
     </main>
 
@@ -180,12 +176,6 @@
                 // Display prompt recap with the beginning of the Daf
                 const shortenedText = hebrewTextContent.split("\n").slice(0, 3).join(" ") + "...";
                 promptRecapDiv.textContent = `${aiPrompt} ${shortenedText}`;
-
-                // Update AI discussion links
-                const encodedText = encodeURIComponent(`${aiPrompt}\n\n${hebrewTextContent}`);
-                document.getElementById("perplexityLink").href = `https://www.perplexity.ai/?q=${encodedText}`;
-                document.getElementById("geminiLink").href = `https://gemini.google.com/search?q=${encodedText}`;
-                document.getElementById("bingLink").href = `https://copilot.microsoft.com/?q=${encodedText}`;
 
             } catch (error) {
                 hebrewTextDiv.textContent = "An error occurred while fetching the Daf. Please try again later.";
