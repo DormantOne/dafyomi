@@ -6,34 +6,27 @@
     <title>Daf Yomi with AI Tools</title>
     <style>
         body {
-            font-family: 'Arial', sans-serif;
+            font-family: Arial, sans-serif;
             background-color: #f4f4f9;
             margin: 0;
-            padding: 0;
+            padding: 20px;
         }
 
         header {
-            background-color: #1a73e8;
-            color: white;
-            padding: 20px;
             text-align: center;
+            margin-bottom: 20px;
         }
 
-        header h1 {
-            margin: 0;
+        h1 {
+            color: #1a73e8;
             font-size: 2em;
-        }
-
-        header h2 {
             margin: 0;
-            font-size: 1.2em;
-            font-weight: normal;
         }
 
-        main {
-            padding: 20px;
-            max-width: 800px;
-            margin: 0 auto;
+        h2 {
+            color: #555;
+            font-size: 1.2em;
+            margin-top: 5px;
         }
 
         #hebrewText {
@@ -50,36 +43,36 @@
         }
 
         .buttons {
-            margin-top: 20px;
             text-align: center;
+            margin-top: 20px;
         }
 
-        .buttons button {
+        button {
             background-color: #1a73e8;
             color: white;
             border: none;
-            padding: 10px 20px;
-            margin: 5px;
+            padding: 10px 15px;
             border-radius: 5px;
             cursor: pointer;
             font-size: 1em;
+            margin: 5px;
         }
 
-        .buttons button:hover {
+        button:hover {
             background-color: #1558b3;
         }
 
         .ai-links {
             text-align: center;
-            margin-top: 30px;
+            margin-top: 20px;
         }
 
         .ai-links a {
             text-decoration: none;
             color: #1a73e8;
             font-weight: bold;
-            margin: 0 10px;
             font-size: 1.1em;
+            margin: 0 10px;
         }
 
         .ai-links a:hover {
@@ -108,7 +101,7 @@
             <button id="copyDaf">Copy Daf Content</button>
         </div>
 
-        <div id="hebrewText"></div>
+        <div id="hebrewText">Your Daf Yomi content will appear here.</div>
 
         <div class="ai-links">
             <h4>Ask AI to Help:</h4>
@@ -124,7 +117,7 @@
     </footer>
 
     <script>
-        const dafYomiJsonUrl = "https://yourusername.github.io/daf-yomi/Daf_Yomi_Cycle.json"; // Adjust with your GitHub Pages JSON URL
+        const dafYomiJsonUrl = "Daf_Yomi_Cycle.json"; // Path to the JSON file
         let hebrewTextContent = "";
 
         // Get today's date in YYYY-MM-DD format
@@ -147,6 +140,7 @@
                 if (!currentDaf) {
                     currentDateDiv.textContent = `Today's Date: ${today}`;
                     currentDafDiv.textContent = "No Daf Yomi assigned for today.";
+                    hebrewTextDiv.textContent = "No content available for today's Daf.";
                     return;
                 }
 
@@ -176,7 +170,7 @@
                 document.getElementById("bingLink").href = `https://copilot.microsoft.com/?q=${encodedText}`;
 
             } catch (error) {
-                hebrewTextDiv.textContent = error.message;
+                hebrewTextDiv.textContent = "An error occurred while fetching the Daf. Please try again later.";
             }
         });
 
