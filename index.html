@@ -11,13 +11,19 @@
     <button id="fetchDaf">Fetch Daf</button>
 
     <script>
-        document.getElementById("fetchDaf").addEventListener("click", async () => {
+        async function fetchDafHandler() {
             const currentDateDiv = document.getElementById("currentDate");
             const currentDafDiv = document.getElementById("currentDaf");
             const hebrewTextDiv = document.getElementById("hebrewText");
 
-            // Hardcoded test date for debugging
-            const today = "12/31/2024"; // Known date with assignment "Sanhedrin 14"
+            // Generate date in M/D/YYYY format
+            const date = new Date("2025-01-01"); // Test with known date; change to new Date() for current date
+            const month = date.getMonth() + 1;
+            const day = date.getDate();
+            const year = date.getFullYear();
+            const today = `${month}/${day}/${year}`; // e.g., "1/1/2025"
+
+            console.log("Generated today:", today);
             currentDateDiv.textContent = `Today's Date: ${today}`;
 
             try {
@@ -28,11 +34,13 @@
                 }
                 const dafYomiData = await response.json();
                 console.log("JSON loaded:", dafYomiData);
+                console.log("Available keys:", Object.keys(dafYomiData));
 
                 // Check if the key exists
                 if (today in dafYomiData) {
                     console.log("Key exists, assignment:", dafYomiData[today]);
                     currentDafDiv.textContent = `Daf Yomi: ${dafYomiData[today]}`;
+                    console.log("Updated currentDafDiv to:", currentDafDiv.textContent);
                 } else {
                     console.log("Key does not exist");
                     currentDafDiv.textContent = "No Daf Yomi assigned for today.";
@@ -42,7 +50,12 @@
                 console.error("Error:", error);
                 hebrewTextDiv.textContent = "Error fetching Daf.";
             }
-        });
+        }
+
+        // Prevent multiple event listeners
+        const fetchDafButton = document.getElementById("fetchDaf");
+        fetchDafButton.removeEventListener("click", fetchDafHandler); // Remove any existing
+        fetchDafButton.addEventListener("click", fetchDafHandler);
     </script>
 </body>
 </html>
