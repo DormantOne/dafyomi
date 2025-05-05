@@ -125,47 +125,40 @@
     </footer>
 
     <script>
- // Get today's date in MM/DD/YYYY format (e.g., "05/05/2025")
-const date = new Date("2025-05-05"); // Replace with `new Date()` for current date
-const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-based, so +1
-const day = String(date.getDate()).padStart(2, '0');
-const year = date.getFullYear();
-const today = `${month}/${day}/${year}`;
+document.getElementById("fetchDaf").addEventListener("click", async () => {
+    const currentDateDiv = document.getElementById("currentDate");
+    const currentDafDiv = document.getElementById("currentDaf");
 
-// Display the date (optional, adjust based on your HTML)
-document.getElementById("currentDate").textContent = `Today's Date: ${today}`;
+    // Get the current date (or use a test date like "2025-01-01")
+    const date = new Date(); // Replace with new Date("2025-01-01") for testing
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    const year = date.getFullYear();
+    const today = `${month}/${day}/${year}`;
 
-// Log for debugging
-console.log("Today's date:", today);
+    // Display the date
+    currentDateDiv.textContent = `Today's Date: ${today}`;
 
-// Fetch the Daf Yomi JSON file
-fetch("Daf_Yomi_Cycle.json") // Replace with your actual JSON URL or path
-    .then(response => {
-        if (!response.ok) {
-            throw new Error("Failed to load Daf Yomi JSON.");
-        }
-        return response.json();
-    })
-    .then(dafYomiData => {
-        // Log available dates for debugging
-        console.log("Available dates:", Object.keys(dafYomiData));
+    try {
+        // Fetch the JSON file
+        const response = await fetch("Daf_Yomi_Cycle.json");
+        if (!response.ok) throw new Error("Failed to load JSON");
+        const dafYomiData = await response.json();
 
+        // Look up the Daf Yomi assignment
         const currentDaf = dafYomiData[today];
 
-        if (!currentDaf) {
-            document.getElementById("currentDaf").textContent = "No Daf Yomi assigned for today.";
-            document.getElementById("hebrewText").textContent = "No content available for today's Daf.";
-            return;
+        // Display the result
+        if (currentDaf) {
+            currentDafDiv.textContent = `Daf Yomi: ${currentDaf}`;
+        } else {
+            currentDafDiv.textContent = "No Daf Yomi assigned for today.";
         }
-
-        // If found, display the Daf Yomi assignment
-        document.getElementById("currentDaf").textContent = `Today's Daf: ${currentDaf}`;
-        // Add your logic to fetch/display additional content if needed
-    })
-    .catch(error => {
+    } catch (error) {
         console.error("Error:", error);
-        document.getElementById("hebrewText").textContent = "An error occurred while fetching the Daf. Please try again later.";
-    });
+        currentDafDiv.textContent = "Error fetching Daf.";
+    }
+});
     </script>
 </body>
 </html>
