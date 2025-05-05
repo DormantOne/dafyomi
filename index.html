@@ -2,163 +2,52 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Daf Yomi with AI Tools</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f9;
-            margin: 0;
-            padding: 20px;
-        }
-
-        header {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-
-        h1 {
-            color: #1a73e8;
-            font-size: 2em;
-            margin: 0;
-        }
-
-        h2 {
-            color: #555;
-            font-size: 1.2em;
-            margin-top: 5px;
-        }
-
-        #hebrewText {
-            direction: rtl;
-            font-family: 'David', serif;
-            background-color: #ffffff;
-            padding: 20px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            margin-top: 20px;
-            max-height: 300px;
-            overflow-y: auto;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-        }
-
-        .buttons {
-            text-align: center;
-            margin-top: 20px;
-        }
-
-        button {
-            background-color: #1a73e8;
-            color: white;
-            border: none;
-            padding: 10px 15px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 1em;
-            margin: 5px;
-        }
-
-        button:hover {
-            background-color: #1558b3;
-        }
-
-        .ai-links {
-            margin-top: 30px;
-        }
-
-        .ai-links a {
-            text-decoration: none;
-            color: #1a73e8;
-            font-weight: bold;
-            font-size: 1.1em;
-            margin: 0 10px;
-        }
-
-        footer {
-            text-align: center;
-            margin-top: 30px;
-            color: #888;
-        }
-
-        #promptRecap {
-            margin-top: 20px;
-            font-size: 1em;
-            color: #555;
-            text-align: left;
-        }
-    </style>
+    <title>Daf Yomi</title>
 </head>
 <body>
-    <header>
-        <h1>Daf Yomi</h1>
-        <h2>Explore, Summarize, and Translate Key Insights</h2>
-    </header>
-
-    <main>
-        <h3 id="currentDate"></h3>
-        <h3 id="currentDaf"></h3>
-        
-        <div class="buttons">
-            <button id="fetchDaf">Fetch Daf</button>
-        </div>
-
-        <div id="hebrewText">Your Daf Yomi content will appear here.</div>
-
-        <div id="promptRecap"></div>
-
-        <div class="buttons">
-            <button id="copyDaf">Copy Prompt and Daf</button>
-        </div>
-
-        <div class="ai-links">
-            <h4>AI Discussion Links:</h4>
-            <ul>
-                <li><a href="https://www.perplexity.ai/" target="_blank">Go to Perplexity</a> (Paste your content there)</li>
-                <li><a href="https://gemini.google.com/" target="_blank">Go to Gemini</a> (Paste your content there)</li>
-                <li><a href="https://copilot.microsoft.com/" target="_blank">Go to Microsoft Copilot</a> (Paste your content there)</li>
-            </ul>
-        </div>
-    </main>
-
-    <footer>
-        &copy; 2025 Daf Yomi Project - Empowering Learning Through Technology
-    </footer>
+    <h3 id="currentDate"></h3>
+    <h3 id="currentDaf"></h3>
+    <div id="hebrewText"></div>
+    <button id="fetchDaf">Fetch Daf</button>
 
     <script>
-document.getElementById("fetchDaf").addEventListener("click", async () => {
-    const currentDateDiv = document.getElementById("currentDate");
-    const currentDafDiv = document.getElementById("currentDaf");
+        document.getElementById("fetchDaf").addEventListener("click", async () => {
+            const currentDateDiv = document.getElementById("currentDate");
+            const currentDafDiv = document.getElementById("currentDaf");
+            const hebrewTextDiv = document.getElementById("hebrewText");
 
-    // Get the current date (or use a test date like "2025-01-01")
-    const date = new Date(); // Replace with new Date("2025-01-01") for testing
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
-    const year = date.getFullYear();
-    const today = `${month}/${day}/${year}`;
+            // Test with a date known to be in the JSON
+            const date = new Date("2025-01-01"); // Change to new Date() for today's date
+            const month = date.getMonth() + 1; // e.g., 1 for January
+            const day = date.getDate(); // e.g., 1 for the 1st
+            const year = date.getFullYear(); // e.g., 2025
+            const today = `${month}/${day}/${year}`; // e.g., "1/1/2025"
 
-    // Display the date
-    currentDateDiv.textContent = `Today's Date: ${today}`;
+            currentDateDiv.textContent = `Today's Date: ${today}`;
 
-    try {
-        // Fetch the JSON file
-        const response = await fetch("Daf_Yomi_Cycle.json");
-        if (!response.ok) throw new Error("Failed to load JSON");
-        const dafYomiData = await response.json();
+            try {
+                const response = await fetch("Daf_Yomi_Cycle.json");
+                if (!response.ok) {
+                    console.error("Failed to load JSON:", response.status);
+                    throw new Error("Failed to load JSON");
+                }
+                const dafYomiData = await response.json();
+                console.log("JSON loaded:", dafYomiData);
+                console.log("Looking for date:", today);
 
-        // Look up the Daf Yomi assignment
-        const currentDaf = dafYomiData[today];
+                const currentDaf = dafYomiData[today];
+                if (!currentDaf) {
+                    currentDafDiv.textContent = "No Daf Yomi assigned for today.";
+                    hebrewTextDiv.textContent = "No content available.";
+                    return;
+                }
 
-        // Display the result
-        if (currentDaf) {
-            currentDafDiv.textContent = `Daf Yomi: ${currentDaf}`;
-        } else {
-            currentDafDiv.textContent = "No Daf Yomi assigned for today.";
-        }
-    } catch (error) {
-        console.error("Error:", error);
-        currentDafDiv.textContent = "Error fetching Daf.";
-    }
-});
+                currentDafDiv.textContent = `Daf Yomi: ${currentDaf}`;
+            } catch (error) {
+                console.error("Error:", error);
+                hebrewTextDiv.textContent = "Error fetching Daf.";
+            }
+        });
     </script>
 </body>
 </html>
