@@ -11,27 +11,24 @@
             margin: 0;
             padding: 20px;
         }
-
         header {
             text-align: center;
             margin-bottom: 20px;
         }
-
         h1 {
             color: #1a73e8;
             font-size: 2em;
             margin: 0;
         }
-
         h2 {
             color: #555;
             font-size: 1.2em;
             margin-top: 5px;
         }
-
         #hebrewText {
             direction: rtl;
-            font-family: 'David', serif;
+            font-family: 'SBL Hebrew', 'Ezra SIL', 'Cardo', serif;
+            font-size: 1.2em;
             background-color: #ffffff;
             padding: 20px;
             border: 1px solid #ddd;
@@ -41,12 +38,10 @@
             overflow-y: auto;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         }
-
         .buttons {
             text-align: center;
             margin-top: 20px;
         }
-
         button {
             background-color: #1a73e8;
             color: white;
@@ -57,15 +52,16 @@
             font-size: 1em;
             margin: 5px;
         }
-
-        button:hover {
+        button:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+        button:hover:not(:disabled) {
             background-color: #1558b3;
         }
-
         .ai-links {
             margin-top: 30px;
         }
-
         .ai-links a {
             text-decoration: none;
             color: #1a73e8;
@@ -73,13 +69,11 @@
             font-size: 1.1em;
             margin: 0 10px;
         }
-
         footer {
             text-align: center;
             margin-top: 30px;
             color: #888;
         }
-
         #promptRecap {
             margin-top: 20px;
             font-size: 1em;
@@ -104,7 +98,7 @@
 
         <div id="hebrewText">Your Daf Yomi content will appear here.</div>
 
-        <div id="prompt posibilidadesRecap"></div>
+        <div id="promptRecap"></div>
 
         <div class="buttons">
             <button id="copyDaf">Copy Prompt and Daf</button>
@@ -125,7 +119,7 @@
     </footer>
 
     <script>
-        const dafYomiJsonUrl = "Daf_Yomi_Cycle.json"; // Path to the JSON file
+        const dafYomiJsonUrl = "Daf_Yomi_Cycle.json";
         let hebrewTextContent = "";
         const aiPrompt = "Provide context, summarize, and translate key phrases for the following Daf: ";
 
@@ -136,20 +130,29 @@
             if (isFetching) return;
             isFetching = true;
 
+            const fetchDafButton = document.getElementById("fetchDaf");
             const currentDateDiv = document.getElementById("currentDate");
             const currentDafDiv = document.getElementById("currentDaf");
             const hebrewTextDiv = document.getElementById("hebrewText");
             const promptRecapDiv = document.getElementById("promptRecap");
 
-            // Generate date in M/D/YYYY format
-            const date = new Date("2025-05-05"); // Test with 2025-05-05; change to new Date() for current date
+            // Disable button during fetch
+            if (fetchDafButton) fetchDafButton.disabled = true;
+
+            // Generate date in M/D/YYYY format, adjust for one-day offset
+            const date = new Date("2025-05-05"); // Test date; change to new Date() for current date
+            date.setDate(date.getDate() - 1); // Adjust by one day to fix offset
             const month = date.getMonth() + 1;
             const day = date.getDate();
             const year = date.getFullYear();
-            const today = `${month}/${day}/${year}`; // e.g., "5/5/2025"
+            const today = `${month}/${day}/${year}`; // e.g., "5/4/2025"
 
             console.log("Generated today:", today);
-            currentDateDiv.textContent = `Today's Date: ${today}`;
+            if (currentDateDiv) {
+                currentDateDiv.textContent = `Today's Date: ${today}`;
+            } else {
+                console.error("currentDateDiv is null");
+            }
 
             try {
                 // Fetch the Daf Yomi JSON file
@@ -164,20 +167,30 @@
                 // Check if the date exists
                 if (today in dafYomiData) {
                     console.log("Key exists, assignment:", dafYomiData[today]);
-                    currentDafDiv.textContent = `Daf Yomi: ${dafYomiData[today]}`;
-                    console.log("Updated currentDafDiv to:", currentDafDiv.textContent);
+                    if (currentDafDiv) {
+                        currentDafDiv.textContent = `Daf Yomi: ${dafYomiData[today]}`;
+                        console.log("Updated currentDafDiv to:", currentDafDiv.textContent);
+                    } else {
+                        console.error("currentDafDiv is null");
+                    }
                 } else {
                     console.log("Key does not exist");
-                    currentDafDiv.textContent = "No Daf Yomi assigned for today.";
-                    hebrewTextDiv.textContent = "No content available for today's Daf.";
+                    if (currentDafDiv) {
+                        currentDafDiv.textContent = "No Daf Yomi assigned for today.";
+                    }
+                    if (hebrewTextDiv) {
+                        hebrewTextDiv.textContent = "No content available for today's Daf.";
+                    }
                     return;
                 }
 
                 const currentDaf = dafYomiData[today];
 
-                // Fetch the text for the current Daf
-                const url = `https://www.sefaria.org/api/texts/${currentDaf}?context=0&pad=0`;
-                hebrewTextDiv.textContent = "Fetching Daf text...";
+                // Fetch the Aramaic text for the current Daf
+                const url = `https://www.sefaria.org/api/texts/${currentDaf}?context=0&pad=0&vlang=he`;
+                if (hebrewTextDiv) {
+                    hebrewTextDiv.textContent = "Fetching Daf text...";
+                }
                 const dafResponse = await fetch(url, {
                     headers: { "Accept": "application/json" }
                 });
@@ -197,38 +210,59 @@
                     throw new Error(`Invalid JSON from Sefaria API: ${jsonError.message}`);
                 }
 
-                const hebrewText = dafData.he || "No Hebrew text found.";
+                // Check for Aramaic/Hebrew text
+                const hebrewText = dafData.he && dafData.he.length > 0 ? dafData.he : dafData.heRef || "No Aramaic text found.";
                 hebrewTextContent = Array.isArray(hebrewText) ? hebrewText.join("\n") : hebrewText;
 
-                hebrewTextDiv.innerHTML = Array.isArray(hebrewText) ? hebrewText.join("<br>") : hebrewText;
+                if (hebrewTextDiv) {
+                    hebrewTextDiv.innerHTML = Array.isArray(hebrewText) ? hebrewText.join("<br>") : hebrewText;
+                } else {
+                    console.error("hebrewTextDiv is null");
+                }
 
                 const shortenedText = hebrewTextContent.split("\n").slice(0, 3).join(" ") + "...";
-                promptRecapDiv.textContent = `${aiPrompt} ${shortenedText}`;
+                if (promptRecapDiv) {
+                    promptRecapDiv.textContent = `${aiPrompt} ${shortenedText}`;
+                } else {
+                    console.error("promptRecapDiv is null");
+                }
             } catch (error) {
                 console.error("Error fetching Daf:", error);
-                hebrewTextDiv.textContent = `Error: ${error.message}. Please check your network or try again later.`;
+                if (hebrewTextDiv) {
+                    hebrewTextDiv.textContent = `Error: ${error.message}. Please check your network or try again later.`;
+                }
             } finally {
                 isFetching = false;
+                if (fetchDafButton) fetchDafButton.disabled = false;
             }
         }
 
         // Attach event listener
         const fetchDafButton = document.getElementById("fetchDaf");
-        fetchDafButton.removeEventListener("click", handleFetchDaf); // Prevent duplicates
-        fetchDafButton.addEventListener("click", handleFetchDaf);
+        if (fetchDafButton) {
+            fetchDafButton.removeEventListener("click", handleFetchDaf);
+            fetchDafButton.addEventListener("click", handleFetchDaf);
+        } else {
+            console.error("fetchDafButton is null");
+        }
 
-        document.getElementById("copyDaf").addEventListener("click", () => {
-            const promptRecapDiv = document.getElementById("promptRecap");
-            const fullTextToCopy = `${promptRecapDiv.textContent}\n\n${hebrewTextContent}`;
+        const copyDafButton = document.getElementById("copyDaf");
+        if (copyDafButton) {
+            copyDafButton.addEventListener("click", () => {
+                const promptRecapDiv = document.getElementById("promptRecap");
+                const fullTextToCopy = promptRecapDiv ? `${promptRecapDiv.textContent}\n\n${hebrewTextContent}` : hebrewTextContent;
 
-            if (hebrewTextContent) {
-                navigator.clipboard.writeText(fullTextToCopy)
-                    .then(() => alert("Prompt and Daf Yomi content copied to clipboard!"))
-                    .catch(() => alert("Failed to copy content."));
-            } else {
-                alert("No content to copy!");
-            }
-        });
+                if (hebrewTextContent) {
+                    navigator.clipboard.writeText(fullTextToCopy)
+                        .then(() => alert("Prompt and Daf Yomi content copied to clipboard!"))
+                        .catch(() => alert("Failed to copy content."));
+                } else {
+                    alert("No content to copy!");
+                }
+            });
+        } else {
+            console.error("copyDafButton is null");
+        }
     </script>
 </body>
 </html>
