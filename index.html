@@ -1,4 +1,131 @@
-const dafYomiJsonUrl = "Daf_Yomi_Cycle.json"; // Path to your JSON file
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daf Yomi with AI Tools</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            color: #1a73e8;
+            font-size: 2em;
+            margin: 0;
+        }
+
+        h2 {
+            color: #555;
+            font-size: 1.2em;
+            margin-top: 5px;
+        }
+
+        #hebrewText {
+            direction: rtl;
+            font-family: 'David', serif;
+            background-color: #ffffff;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin-top: 20px;
+            max-height: 300px;
+            overflow-y: auto;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .buttons {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        button {
+            background-color: #1a73e8;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            margin: 5px;
+        }
+
+        button:hover {
+            background-color: #1558b3;
+        }
+
+        .ai-links {
+            margin-top: 30px;
+        }
+
+        .ai-links a {
+            text-decoration: none;
+            color: #1a73e8;
+            font-weight: bold;
+            font-size: 1.1em;
+            margin: 0 10px;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 30px;
+            color: #888;
+        }
+
+        #promptRecap {
+            margin-top: 20px;
+            font-size: 1em;
+            color: #555;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Daf Yomi</h1>
+        <h2>Explore, Summarize, and Translate Key Insights</h2>
+    </header>
+
+    <main>
+        <h3 id="currentDate"></h3>
+        <h3 id="currentDaf"></h3>
+        
+        <div class="buttons">
+            <button id="fetchDaf">Fetch Daf</button>
+        </div>
+
+        <div id="hebrewText">Your Daf Yomi content will appear here.</div>
+
+        <div id="promptRecap"></div>
+
+        <div class="buttons">
+            <button id="copyDaf">Copy Prompt and Daf</button>
+        </div>
+
+        <div class="ai-links">
+            <h4>AI Discussion Links:</h4>
+            <ul>
+                <li><a href="https://www.perplexity.ai/" target="_blank">Go to Perplexity</a> (Paste your content there)</li>
+                <li><a href="https://gemini.google.com/" target="_blank">Go to Gemini</a> (Paste your content there)</li>
+                <li><a href="https://copilot.microsoft.com/" target="_blank">Go to Microsoft Copilot</a> (Paste your content there)</li>
+            </ul>
+        </div>
+    </main>
+
+    <footer>
+        &copy; 2025 Daf Yomi Project - Empowering Learning Through Technology
+    </footer>
+
+    <script>
+  const dafYomiJsonUrl = "Daf_Yomi_Cycle.json"; // Path to your JSON file
 let hebrewTextContent = "";
 const aiPrompt = "Provide context, summarize, and translate key phrases for the following Daf: ";
 
@@ -83,3 +210,6 @@ document.getElementById("copyDaf").addEventListener("click", () => {
         alert("No content to copy!");
     }
 });
+    </script>
+</body>
+</html>
