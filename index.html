@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Daf Yomi</title>
+    <title>Daf Yomi Test</title>
 </head>
 <body>
     <h3 id="currentDate"></h3>
@@ -16,13 +16,8 @@
             const currentDafDiv = document.getElementById("currentDaf");
             const hebrewTextDiv = document.getElementById("hebrewText");
 
-            // Test with a date known to be in the JSON
-            const date = new Date("2025-01-01"); // Change to new Date() for today's date
-            const month = date.getMonth() + 1; // e.g., 1 for January
-            const day = date.getDate(); // e.g., 1 for the 1st
-            const year = date.getFullYear(); // e.g., 2025
-            const today = `${month}/${day}/${year}`; // e.g., "1/1/2025"
-
+            // Hardcoded test date for debugging
+            const today = "12/31/2024"; // Known date with assignment "Sanhedrin 14"
             currentDateDiv.textContent = `Today's Date: ${today}`;
 
             try {
@@ -33,16 +28,16 @@
                 }
                 const dafYomiData = await response.json();
                 console.log("JSON loaded:", dafYomiData);
-                console.log("Looking for date:", today);
 
-                const currentDaf = dafYomiData[today];
-                if (!currentDaf) {
+                // Check if the key exists
+                if (today in dafYomiData) {
+                    console.log("Key exists, assignment:", dafYomiData[today]);
+                    currentDafDiv.textContent = `Daf Yomi: ${dafYomiData[today]}`;
+                } else {
+                    console.log("Key does not exist");
                     currentDafDiv.textContent = "No Daf Yomi assigned for today.";
                     hebrewTextDiv.textContent = "No content available.";
-                    return;
                 }
-
-                currentDafDiv.textContent = `Daf Yomi: ${currentDaf}`;
             } catch (error) {
                 console.error("Error:", error);
                 hebrewTextDiv.textContent = "Error fetching Daf.";
