@@ -125,7 +125,7 @@
     </footer>
 
     <script>
-        const dafYomiJsonUrl = "Daf_Yomi_Cycle.json"; // Path to your JSON file
+      const dafYomiJsonUrl = "Daf_Yomi_Cycle.json"; // Path to your JSON file
 let hebrewTextContent = "";
 const aiPrompt = "Provide context, summarize, and translate key phrases for the following Daf: ";
 
@@ -169,7 +169,19 @@ document.getElementById("fetchDaf").addEventListener("click", async () => {
             throw new Error(`Failed to load Daf text: ${dafResponse.status} ${dafResponse.statusText}`);
         }
 
-        const dafData = await dafResponse.json();
+        // Log the raw response text for debugging
+        const rawText = await dafResponse.text();
+        console.log("Raw API Response:", rawText);
+
+        // Attempt to parse the JSON
+        let dafData;
+        try {
+            dafData = JSON.parse(rawText);
+        } catch (jsonError) {
+            console.error("JSON Parsing Error:", jsonError);
+            throw new Error(`Invalid JSON response from Sefaria API: ${jsonError.message}`);
+        }
+
         // Use the 'he' field for Hebrew text
         const hebrewText = dafData.he || "No Hebrew text found.";
         hebrewTextContent = Array.isArray(hebrewText) ? hebrewText.join("\n") : hebrewText;
